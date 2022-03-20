@@ -4,7 +4,15 @@
   Необходимо, чтобы функция осуществила вставку на страницу указанный тег с указанным содержимым указанное число раз.
   Считаем, что всегда передается тег, допускающий вставку текста в качестве своего содержимого (P, DIV, I и пр.).
 */
+import {cloneElement} from "react";
+
 export function appendToBody(tag, content, count) {
+
+  for(let i = 0; i < count; i++) {
+    const element = document.createElement(tag)
+    element.innerHTML = content
+    document.body.append(element)
+  }
 }
 
 /*
@@ -15,6 +23,27 @@ export function appendToBody(tag, content, count) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function generateTree(childrenCount, level) {
+  let element = document.createElement('div')
+  element.classList.add('item_1')
+
+  for(let i = 2; i <= level; i++) {
+    for(let j = 0; j < childrenCount; j++) {//итерация по узлам родителям
+
+      if(i == 2) {
+        let child = document.createElement('div')
+        child.classList.add(`item_${i}`)
+        element.append(child)
+      } else {
+        for (let l = 0; l < childrenCount; l++) {//итерация по узлам детям
+          let child = document.createElement('div')
+          child.classList.add(`item_${i}`)
+          element.getElementsByClassName(`item_${i-1}`)[j].append(child)
+        }
+      }
+    }
+  }
+
+  return element
 }
 
 /*
@@ -26,4 +55,20 @@ export function generateTree(childrenCount, level) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function replaceNodes() {
+  let col = generateTree(2,3)
+  let sec1 = document.createElement('section')
+  let sec2 = document.createElement('section')
+
+  for(let i = 0; i < 2; i++) {
+    sec1.append(col.getElementsByClassName('item_3')[i].cloneNode())
+    sec2.append(col.getElementsByClassName('item_3')[i + 2].cloneNode())
+  }
+  col.getElementsByClassName('item_2')[0].remove()
+  col.getElementsByClassName('item_2')[0].remove()
+
+  sec1.classList.add('item_2')
+  sec2.classList.add('item_2')
+
+  col.append(sec1, sec2)
+  return col
 }
